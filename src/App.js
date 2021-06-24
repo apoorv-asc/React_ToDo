@@ -9,7 +9,7 @@ function App() {
   const [todos, setTodos]=useState([]);
   const [input,setInput]=useState('');
 
-  // When the app loads, we need to listen to the database and getch new todos
+  // When the app loads, we need to listen to the database and get new todos
   // as they get added/removed
   useEffect(()=> {
     // this code fires either when the app.js loads
@@ -18,7 +18,7 @@ function App() {
     db.collection('todos').onSnapshot(snapshot =>{
       console.log(snapshot.docs.map(doc => doc.data()));
       setTodos(snapshot.docs.map(doc => doc.data().task))
-      // snapshot.docs.map(doc => doc.data().todo) returns an array of todos from Firebase
+      // snapshot.docs.map(doc => doc.data().task) returns an array of todos from Firebase
     })
   },[input])
 
