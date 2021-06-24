@@ -3,6 +3,7 @@ import './App.css';
 import {Input, InputLabel, FormControl, Button } from '@material-ui/core';
 import Todo from './components/Todo';
 import db from './firebase'
+import firebase from 'firebase';
 
 function App() {
   
@@ -15,15 +16,19 @@ function App() {
     // this code fires either when the app.js loads
     // or <[input]> variable loads 1:42
 
-    db.collection('todos').onSnapshot(snapshot =>{
-      console.log(snapshot.docs.map(doc => doc.data()));
-      setTodos(snapshot.docs.map(doc => doc.data().task))
+    db.collection('todos').orderBy('timestamp','desc').onSnapshot(snapshot =>{
+      setTodos(snapshot.docs.map(doc => ({id:doc.id, todo:doc.data().task})))
       // snapshot.docs.map(doc => doc.data().task) returns an array of todos from Firebase
     })
   },[input])
 
   function addTodo(event) {
     event.preventDefault(); // Stops form from submitting
+
+    db.collection('todos').add({
+      task:input,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
 
     // Fired off when we click the button
     // This function takes input's value and appends it to todos
@@ -47,7 +52,7 @@ function App() {
       </form>
       <ul>
         {todos.map(todo =>(
-          <Todo text={todo} />
+          <Todo todo={todo} />
         ))}
       </ul>
       </>
